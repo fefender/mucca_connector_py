@@ -45,8 +45,14 @@ class mucca_connector:
             except InterruptedError as emsg:
                 print('Interrupted signal error, sendto fail')
             if response_flag !=0:
-                response_rec, server = cs.recvfrom(4096)
-                print('Received response from server: {!r}'.format(response_rec))
+                try:
+                    print('waiting for response...')
+                    cs.settimeout(5.0)
+                    response_rec, server = cs.recvfrom(4096)
+                    print('Received response from server: {!r}'.format(response_rec))
+                except socket.timeout as emsg:
+                    print('clientUdp recvfrom timed out (socket.timeout except: {})'.format(emsg))
+                    response_rec = '{"service": { "status": "500", "serviceName": "connector", "action": "NULL" }, "head": { "Content-Type": "application/json; charset=utf-8", "Mucca-Service": "NULL" }, "body": { "msg": "generic error" }}'
             print('Closing socket')
             cs.close()
         return response_rec
