@@ -1,5 +1,6 @@
 import socket
 import sys
+import mucca_logging.mucca_logging import logging
 
 class mucca_connector:
     def __init__(self):
@@ -8,7 +9,7 @@ class mucca_connector:
         with socket.socket(socket.AF_INET, socket.SOCK_DGRAM, socket.IPPROTO_UDP) as ss:
             host = ''
             server_address = (host, port)
-            print('Starting on {} : {}'.format(*server_address))
+            logging.log_info('Starting on {} : {}'.format(*server_address), os.path.abspath(__file__), sys._getframe().f_lineno)
             try:
                 ss.bind(server_address)
             except OSError as emsg:
