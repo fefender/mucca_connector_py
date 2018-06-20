@@ -1,6 +1,6 @@
 import socket
-import sys
-import mucca_logging.mucca_logging import logging
+import sys, os
+from vendor.mucca_logging.mucca_logging import logging
 
 class mucca_connector:
     def __init__(self):
@@ -13,23 +13,28 @@ class mucca_connector:
             try:
                 ss.bind(server_address)
             except OSError as emsg:
-                print('Socket Bind Error{}'.format(emsg))
+                logging.log_error('Socket Bind Error{}'.format(emsg), os.path.abspath(__file__), sys._getframe().f_lineno)
                 ss.close()
                 sys.exit(1)
             while True:
-                print('wait...')
-                # data, address = ss.recvfrom(socket.CMSG_SPACE(blen)) per il client in realtà mi serve, qui no
+                logging.log_info('Wait...', os.path.abspath(__file__), sys._getframe().f_lineno)
                 data, address = ss.recvfrom(4096)
-                print('Received {} bytes from {}'.format(
-                    len(data), address))
-                print(data)
+                logging.log_info(
+                    'Received {} bytes from {}'.format(
+                        len(data),
+                        address
+                        ),
+                    os.path.abspath(__file__),
+                    sys._getframe().f_lineno
+                )
+                logging.log_info(data, os.path.abspath(__file__), sys._getframe().f_lineno)
                 try:
                     response = ptr(data)
                     sent = ss.sendto(bytes(response.encode()), address)
-                    print('Sent {} bytes back to {}'.format(
-                                sent, address))
+                    logging.log_info('Sent {} bytes back to {}'.format(
+                                sent, address), os.path.abspath(__file__), sys._getframe().f_lineno)
                 except OSError as emsg:
-                    print('Data sending error {}'.format(emsg))
+                    logging.log_error('Data sending error {}'.format(emsg), os.path.abspath(__file__), sys._getframe().f_lineno)
                     ss.close()
                     sys.exit(1)
         return 0
@@ -39,21 +44,21 @@ class mucca_connector:
             server_address = (ip, port)
             c_message = bytes(message.encode())
             try:
-                print('Sending {!r}'.format(c_message))
+                logging.log_info('Sending {!r}'.format(c_message), os.path.abspath(__file__), sys._getframe().f_lineno)
                 sent = cs.sendto(c_message, server_address)
-                print('Sent {} bytes back to {} from {}'.format(
-                        sent, server_address, ip))
+                logging.log_info('Sent {} bytes back to {} from {}'.format(
+                        sent, server_address, ip), os.path.abspath(__file__), sys._getframe().f_lineno)
             except InterruptedError as emsg:
-                print('Interrupted signal error, sendto fail')
+                logging.log_error('Interrupted signal error, sendto fail', os.path.abspath(__file__), sys._getframe().f_lineno)
             if response_flag !=0:
                 try:
-                    print('waiting for response...')
+                    logging.log_info('waiting for response...', os.path.abspath(__file__), sys._getframe().f_lineno)
                     cs.settimeout(5.0)
                     response_rec, server = cs.recvfrom(4096)
-                    print('Received response from server: {!r}'.format(response_rec))
+                    logging.log_info('Received response from server: {!r}'.format(response_rec), os.path.abspath(__file__), sys._getframe().f_lineno)
                 except socket.timeout as emsg:
-                    print('clientUdp recvfrom timed out (socket.timeout except: {})'.format(emsg))
+                    logging.log_error('clientUdp recvfrom timed out (socket.timeout except: {})'.format(emsg), os.path.abspath(__file__), sys._getframe().f_lineno)
                     response_rec = '{"service": { "status": "500", "serviceName": "connector", "action": "NULL" }, "head": { "Content-Type": "application/json; charset=utf-8", "Mucca-Service": "NULL" }, "body": { "msg": "generic error" }}'
-            print('Closing socket')
+            logging.log_info('Closing socket', os.path.abspath(__file__), sys._getframe().f_lineno)
             cs.close()
         return response_rec
