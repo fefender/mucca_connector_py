@@ -86,7 +86,7 @@ class mucca_connector:
             c_message = bytes(message.encode())
             try:
                 logging.log_info(
-                    'Sending {!r}'.format(c_message),
+                    'Sending {}'.format(c_message),
                     os.path.abspath(__file__),
                     sys._getframe().f_lineno
                 )
@@ -116,7 +116,7 @@ class mucca_connector:
                     cs.settimeout(5.0)
                     response_rec, server = cs.recvfrom(int(buffersize))
                     logging.log_info(
-                        'Received response from server: {!r}'.format(
+                        'Received response from server: {}'.format(
                             response_rec
                         ),
                         os.path.abspath(__file__),
