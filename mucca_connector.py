@@ -76,6 +76,7 @@ class mucca_connector:
 
     def clientUdp(self, port, ip, message, response_flag, buffersize):
         """ClientUdp."""
+        response_rec = None
         with socket.socket(
             socket.AF_INET,
             socket.SOCK_DGRAM,
@@ -113,7 +114,7 @@ class mucca_connector:
                         sys._getframe().f_lineno
                     )
                     cs.settimeout(5.0)
-                    response_rec, server = cs.recvfrom(4096)
+                    response_rec, server = cs.recvfrom(int(buffersize))
                     logging.log_info(
                         'Received response from server: {!r}'.format(
                             response_rec
