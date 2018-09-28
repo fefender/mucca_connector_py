@@ -68,6 +68,6 @@ class muccaChunckRecvfrom:
                 )
             completeMsg = "{}{}".format(completeMsg, data.decode('utf-8'))
         return {
-                "data": completeMsg,
+                "data": completeMsg.encode(),
                 "address": address
                 }
