@@ -20,6 +20,8 @@ import socket
 import sys
 import os
 from vendor.mucca_logging.mucca_logging import logging
+from vendor.mucca_connector_py.src.muccaChunckRecvfrom.muccaChunckRecvfrom import muccaChunckRecvfrom
+from vendor.mucca_connector_py.src.muccaChunckSendTo.muccaChunckSendTo import muccaChunckSendTo
 
 
 class mucca_connector:
@@ -29,7 +31,7 @@ class mucca_connector:
         """Init."""
         pass
 
-    def serverHandler(self, port, blen, ptr=None):
+    def serverHandler(self, port, buffersize, ptr=None):
         """ServerHandler."""
         with socket.socket(
             socket.AF_INET,
@@ -39,7 +41,17 @@ class mucca_connector:
             host = ''
             server_address = (host, port)
             logging.log_info(
-                'Starting on {} : {}'.format(*server_address),
+                'PORT : {}'.format(port),
+                os.path.abspath(__file__),
+                sys._getframe().f_lineno
+            )
+            logging.log_info(
+                'BUFFER_SIZE : {}'.format(buffersize),
+                os.path.abspath(__file__),
+                sys._getframe().f_lineno
+            )
+            logging.log_info(
+                'PROTOCOL : UDP',
                 os.path.abspath(__file__),
                 sys._getframe().f_lineno
             )
@@ -54,41 +66,15 @@ class mucca_connector:
                 ss.close()
                 sys.exit(1)
             while True:
-                logging.log_info(
-                    'Wait...',
-                    os.path.abspath(__file__),
-                    sys._getframe().f_lineno
-                    )
-                data, address = ss.recvfrom(4096)
-                logging.log_info(
-                    'Received {} bytes from {}'.format(
-                        len(data),
-                        address
-                        ),
-                    os.path.abspath(__file__),
-                    sys._getframe().f_lineno
+                result = muccaChunckRecvfrom.run(ss, buffersize, logging)
+                response = ptr(result["data"])
+                muccaChunckSendTo.run(
+                    ss,
+                    buffersize,
+                    str(response),
+                    result["address"],
+                    logging
                 )
-                logging.log_info(
-                    data,
-                    os.path.abspath(__file__),
-                    sys._getframe().f_lineno
-                )
-                try:
-                    response = ptr(data)
-                    sent = ss.sendto(bytes(response.encode()), address)
-                    logging.log_info(
-                        'Sent {} bytes back to {}'.format(sent, address),
-                        os.path.abspath(__file__),
-                        sys._getframe().f_lineno
-                    )
-                except OSError as emsg:
-                    logging.log_error(
-                        'Data sending error {}'.format(emsg),
-                        os.path.abspath(__file__),
-                        sys._getframe().f_lineno
-                    )
-                    ss.close()
-                    sys.exit(1)
         return 0
 
     def clientUdp(self, port, ip, message, response_flag, buffersize):
@@ -102,21 +88,14 @@ class mucca_connector:
             server_address = (ip, port)
             c_message = bytes(message.encode())
             try:
-                logging.log_info(
-                    'Sending {}'.format(c_message),
-                    os.path.abspath(__file__),
-                    sys._getframe().f_lineno
+                muccaChunckSendTo.run(
+                    cs,
+                    buffersize,
+                    str(c_message, "utf-8"),
+                    server_address,
+                    logging
                 )
-                sent = cs.sendto(c_message, server_address)
-                logging.log_info(
-                    'Sent {} bytes back to {} from {}'.format(
-                        sent,
-                        server_address,
-                        ip
-                    ),
-                    os.path.abspath(__file__),
-                    sys._getframe().f_lineno
-                )
+
             except InterruptedError as emsg:
                 logging.log_error(
                     'Interrupted signal error, sendto fail',
@@ -125,33 +104,23 @@ class mucca_connector:
                 )
             if response_flag != 0:
                 try:
-                    logging.log_info(
-                        'waiting for response...',
-                        os.path.abspath(__file__),
-                        sys._getframe().f_lineno
-                    )
-                    cs.settimeout(5.0)
-                    response_rec, server = cs.recvfrom(int(buffersize))
-                    logging.log_info(
-                        'Received response from server: {}'.format(
-                            response_rec
-                        ),
-                        os.path.abspath(__file__),
-                        sys._getframe().f_lineno
-                    )
+                    cs.settimeout(10.0)
+                    result = muccaChunckRecvfrom.run(cs, buffersize, logging)
+                    response_rec = result["data"]
                 except socket.timeout as emsg:
-                    logging.log_error(
-                        'clientUdp recvfrom timed out: {})'.format(
-                            emsg
-                        ),
-                        os.path.abspath(__file__),
-                        sys._getframe().f_lineno
-                    )
-                    response_rec = '{"service": { "status": "500", "serviceName": "connector", "action": "NULL" }, "head": { "Content-Type": "application/json; charset=utf-8", "Mucca-Service": "NULL" }, "body": { "msg": "generic error" }}'
-            logging.log_info(
-                'Closing socket',
-                os.path.abspath(__file__),
-                sys._getframe().f_lineno
-            )
+                    response_rec = str({
+                        "service": {
+                            "status": "500",
+                            "serviceName": "connector",
+                            "action": "NULL"
+                            },
+                        "head": {
+                            "Content-Type": "application/json; charset=utf-8",
+                            "Mucca-Service": "NULL"
+                            },
+                        "body": {
+                            "msg": "generic error"
+                        }
+                    }, "utf-8")
             cs.close()
         return response_rec
