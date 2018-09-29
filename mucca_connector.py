@@ -111,6 +111,7 @@ class mucca_connector:
                 try:
                     cs.settimeout(10.0)
                     result = muccaChunckRecvfrom.run(cs, buffersize, logging)
+                    print(type(result["data"]))
                     response_rec = result["data"]
                 except socket.timeout as emsg:
                     response_rec = str({
@@ -126,6 +127,21 @@ class mucca_connector:
                         "body": {
                             "msg": "generic error"
                         }
-                    }, "utf-8")
+                    })
+            else:
+                response_rec = str({
+                    "service": {
+                        "status": "202",
+                        "serviceName": "connector",
+                        "action": "NULL"
+                        },
+                    "head": {
+                        "Content-Type": "application/json; charset=utf-8",
+                        "Mucca-Service": "NULL"
+                        },
+                    "body": {
+                        "msg": "Response 202 Accepted"
+                    }
+                })
             cs.close()
         return response_rec
