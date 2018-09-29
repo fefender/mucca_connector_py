@@ -66,15 +66,20 @@ class mucca_connector:
                 ss.close()
                 sys.exit(1)
             while True:
-                result = muccaChunckRecvfrom.run(ss, buffersize, logging)
-                response = ptr(result["data"])
-                muccaChunckSendTo.run(
-                    ss,
-                    buffersize,
-                    str(response),
-                    result["address"],
-                    logging
-                )
+                pid = os.fork()
+                if pid == 0:
+                    result = muccaChunckRecvfrom.run(ss, buffersize, logging)
+                    response = ptr(result["data"])
+                    muccaChunckSendTo.run(
+                        ss,
+                        buffersize,
+                        str(response),
+                        result["address"],
+                        logging
+                    )
+                    os._exit(0)
+                else:
+                    os.waitpid(0, 0)
         return 0
 
     def clientUdp(self, port, ip, message, response_flag, buffersize):

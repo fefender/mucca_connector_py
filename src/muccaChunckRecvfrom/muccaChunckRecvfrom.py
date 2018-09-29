@@ -56,7 +56,7 @@ class muccaChunckRecvfrom:
             data, address = socketServer.recvfrom(chunckSize)
 
             logging.log_info(
-                '"FROM {}:{} Chunk [{} of {}]: {} Byte'.format(
+                'FROM {}:{} Chunk [{} of {}]: {} Byte'.format(
                     address[0],
                     address[1],
                     numberOfChunkRecived,
