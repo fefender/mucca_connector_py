@@ -43,7 +43,7 @@ class muccaChunckSendTo:
             logging.log_info(
                 "Send to {}:{} Chunk [{} of {}]: {} Byte".format(
                     address[0],
-                    address[0],
+                    address[1],
                     i+1,
                     int(numberOfChunk),
                     sent
