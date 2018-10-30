@@ -111,7 +111,6 @@ class mucca_connector:
                 try:
                     cs.settimeout(10.0)
                     result = muccaChunckRecvfrom.run(cs, buffersize, logging)
-                    print(type(result["data"]))
                     response_rec = result["data"]
                 except socket.timeout as emsg:
                     response_rec = str({
