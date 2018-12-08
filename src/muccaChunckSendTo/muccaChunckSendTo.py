@@ -23,7 +23,7 @@ class muccaChunckSendTo:
 
         if plusChunk > 0:
             numberOfChunk = int(numberOfChunk + 1.0)
-
+        numberOfChunk = round(numberOfChunk)
         i = 0
         for i in range(0, int(numberOfChunk)):
             chunkedMsg = ""
