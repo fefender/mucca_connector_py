@@ -23,7 +23,7 @@ class muccaChunckSendTo:
 
         if plusChunk > 0:
             numberOfChunk = int(numberOfChunk + 1.0)
-
+        numberOfChunk = round(numberOfChunk)
         i = 0
         for i in range(0, int(numberOfChunk)):
             chunkedMsg = ""
@@ -31,7 +31,7 @@ class muccaChunckSendTo:
                 chunkedMsg = message[len(message)-plusChunk:]
             else:
                 chunkedMsg = message[
-                    (chunckSize)*i: -len(message[int(chunckSize):])
+                    (chunckSize)*i: ((chunckSize)*i)+chunckSize
                 ]
             sent = socketClient.sendto(
                 bytes(
