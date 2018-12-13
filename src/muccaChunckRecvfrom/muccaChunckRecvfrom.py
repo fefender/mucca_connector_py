@@ -35,12 +35,13 @@ class muccaChunckRecvfrom:
             numberOfChunk = int(numberOfChunk + 1.0)
 
         cp = round(numberOfChunk)
+        numberOfChunkInt = round(numberOfChunk)
         completeMsg = ""
-        while numberOfChunk is not 0:
-            numberOfChunk = numberOfChunk-1
+        while numberOfChunkInt is not 0:
+            numberOfChunkInt = numberOfChunkInt-1
             numberOfChunkRecived = numberOfChunkRecived+1
 
-            if numberOfChunk == 0:
+            if numberOfChunkInt == 0:
                 chunckSize = plusChunk
 
             logging.log_info(
