@@ -33,6 +33,7 @@ class muccaChunckSendTo:
                 chunkedMsg = message[
                     (chunckSize)*i: ((chunckSize)*i)+chunckSize
                 ]
+            print("-----------\n", chunkedMsg, "\n---------")
             sent = socketClient.sendto(
                 bytes(
                     str(chunkedMsg).encode()
