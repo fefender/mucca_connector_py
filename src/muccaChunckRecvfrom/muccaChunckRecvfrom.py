@@ -43,7 +43,8 @@ class muccaChunckRecvfrom:
             numberOfChunkRecived = numberOfChunkRecived+1
 
             if numberOfChunkInt == 0:
-                chunckSize = plusChunk
+                # chunckSize = plusChunk
+                chunckSize = int(data)-((cp-1)*chunckSize)
 
             logging.log_info(
                 'WAIT FROM {}:{} [{} of {}]...'.format(
