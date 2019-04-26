@@ -101,7 +101,6 @@ class mucca_connector:
                     server_address,
                     logging
                 )
-
             except InterruptedError as emsg:
                 logging.log_error(
                     'Interrupted signal error, sendto fail',
@@ -143,5 +142,4 @@ class mucca_connector:
                         "msg": "Response 202 Accepted"
                     }
                 })
-            cs.close()
         return response_rec
