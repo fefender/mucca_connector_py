@@ -26,7 +26,7 @@ class muccaChunckRecvfrom:
             os.path.abspath(__file__),
             sys._getframe().f_lineno
             )
-
+        totalsize = int(data)
         numberOfChunk = int(data)/chunckSize
         plusChunk = int(data) % chunckSize
         numberOfChunkRecived = 0
@@ -43,8 +43,7 @@ class muccaChunckRecvfrom:
             numberOfChunkRecived = numberOfChunkRecived+1
 
             if numberOfChunkInt == 0:
-                # chunckSize = plusChunk
-                chunckSize = int(data)-((cp-1)*chunckSize)
+                chunckSize = totalsize-((cp-1)*chunckSize)
 
             logging.log_info(
                 'WAIT FROM {}:{} [{} of {}]...'.format(
