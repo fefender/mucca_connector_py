@@ -77,6 +77,7 @@ class mucca_connector:
                         result["address"],
                         logging
                     )
+                    ss.close()
                     os._exit(0)
                 else:
                     os.waitpid(0, 0)
