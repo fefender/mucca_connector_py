@@ -38,7 +38,7 @@ class muccaChunckRecvfrom:
         numberOfChunkInt = round(numberOfChunk)
 
         completeMsg = ""
-        while numberOfChunkInt is not 0:
+        while numberOfChunkInt != 0:
             numberOfChunkInt = numberOfChunkInt-1
             numberOfChunkRecived = numberOfChunkRecived+1
 

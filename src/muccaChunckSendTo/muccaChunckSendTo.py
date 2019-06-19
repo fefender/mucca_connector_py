@@ -27,7 +27,7 @@ class muccaChunckSendTo:
         i = 0
         for i in range(0, int(numberOfChunk)):
             chunkedMsg = ""
-            if i is numberOfChunk-1 and plusChunk > 0:
+            if i == numberOfChunk-1 and plusChunk > 0:
                 chunkedMsg = message[len(message)-plusChunk:]
             else:
                 chunkedMsg = message[
