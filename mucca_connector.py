@@ -57,7 +57,6 @@ class mucca_connector:
             )
             try:
                 ss.bind(server_address)
-                ss.listen(1)
             except OSError as emsg:
                 logging.log_error(
                     'Socket Bind Error{}'.format(emsg),
