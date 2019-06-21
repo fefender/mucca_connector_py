@@ -81,6 +81,7 @@ class mucca_connector:
                     ss.close()
                     os._exit(0)
                 else:
+                    ss.close()
                     print("****************** parent pid -> ", os.getpid())
                     os.waitpid(0, 0)
         return 0
@@ -114,6 +115,7 @@ class mucca_connector:
                     cs.settimeout(10.0)
                     result = muccaChunckRecvfrom.run(cs, buffersize, logging)
                     response_rec = result["data"]
+                    cs.close()
                 except socket.timeout as emsg:
                     response_rec = {
                         "service": {
