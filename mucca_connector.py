@@ -38,7 +38,6 @@ class mucca_connector:
             socket.SOCK_DGRAM,
             socket.IPPROTO_UDP
         ) as ss:
-            ss.ioctl(socket.SIO_RCVALL, socket.RCVALL_OFF)
             host = ''
             server_address = (host, port)
             logging.log_info(
@@ -58,6 +57,7 @@ class mucca_connector:
             )
             try:
                 ss.bind(server_address)
+                ss.listen(1)
             except OSError as emsg:
                 logging.log_error(
                     'Socket Bind Error{}'.format(emsg),
@@ -94,7 +94,6 @@ class mucca_connector:
             socket.SOCK_DGRAM,
             socket.IPPROTO_UDP
         ) as cs:
-            cs.ioctl(socket.SIO_RCVALL, socket.RCVALL_OFF)
             server_address = (ip, port)
             c_message = bytes(message.encode())
             try:
