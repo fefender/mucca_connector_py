@@ -68,6 +68,7 @@ class mucca_connector:
             while True:
                 pid = os.fork()
                 if pid == 0:
+                    print("******************* child pid -> ", os.getpid())
                     result = muccaChunckRecvfrom.run(ss, buffersize, logging)
                     response = ptr(result["data"])
                     muccaChunckSendTo.run(
@@ -80,6 +81,7 @@ class mucca_connector:
                     ss.close()
                     os._exit(0)
                 else:
+                    print("****************** parent pid -> ", os.getpid())
                     os.waitpid(0, 0)
         return 0
 
