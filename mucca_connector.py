@@ -31,58 +31,66 @@ class mucca_connector:
         """Init."""
         pass
 
-    def serverHandler(self, port, buffersize, ptr=None):
+    def serverHandler(self, ports, buffersize, ptr=None):
         """ServerHandler."""
-        with socket.socket(
-            socket.AF_INET,
-            socket.SOCK_DGRAM,
-            socket.IPPROTO_UDP
-        ) as ss:
-            host = ''
-            server_address = (host, port)
-            logging.log_info(
-                'PORT : {}'.format(port),
-                os.path.abspath(__file__),
-                sys._getframe().f_lineno
-            )
-            logging.log_info(
-                'BUFFER_SIZE : {}'.format(buffersize),
-                os.path.abspath(__file__),
-                sys._getframe().f_lineno
-            )
-            logging.log_info(
-                'PROTOCOL : UDP',
-                os.path.abspath(__file__),
-                sys._getframe().f_lineno
-            )
-            try:
-                ss.bind(server_address)
-            except OSError as emsg:
-                logging.log_error(
-                    'Socket Bind Error{}'.format(emsg),
+        for port in ports:
+            with socket.socket(
+                socket.AF_INET,
+                socket.SOCK_DGRAM,
+                socket.IPPROTO_UDP
+            ) as ss:
+                host = ''
+                server_address = (host, port)
+                logging.log_info(
+                    'PORT : {}'.format(port),
                     os.path.abspath(__file__),
                     sys._getframe().f_lineno
                 )
-                ss.close()
-                sys.exit(1)
-            while True:
-                pid = os.fork()
-                if pid == 0:
-                    print("******************* child pid -> ", os.getpid())
-                    result = muccaChunckRecvfrom.run(ss, buffersize, logging)
-                    response = ptr(result["data"])
-                    muccaChunckSendTo.run(
-                        ss,
-                        buffersize,
-                        str(response),
-                        result["address"],
-                        logging
+                logging.log_info(
+                    'BUFFER_SIZE : {}'.format(buffersize),
+                    os.path.abspath(__file__),
+                    sys._getframe().f_lineno
+                )
+                logging.log_info(
+                    'PROTOCOL : UDP',
+                    os.path.abspath(__file__),
+                    sys._getframe().f_lineno
+                )
+                try:
+                    ss.bind(server_address)
+                except OSError as emsg:
+                    logging.log_error(
+                        'Socket Bind Error{}'.format(emsg),
+                        os.path.abspath(__file__),
+                        sys._getframe().f_lineno
                     )
                     ss.close()
-                    os._exit(0)
+                    sys.exit(1)
+                #while True:
+                pid = os.fork()
+                if pid == 0:
+                    while True:
+                        pid_rec = os.fork()
+                        if pid_rec == 0:
+                            result = muccaChunckRecvfrom.run(ss, buffersize, logging)
+                            response = ptr(result["data"])
+                            muccaChunckSendTo.run(
+                                ss,
+                                buffersize,
+                                str(response),
+                                result["address"],
+                                logging
+                            )
+                            ss.close()
+                            os._exit(0)
+                        else:
+                            # os.waitpid(0, 0)
+                            print("paret-req")
+                            os.waitpid(0, 0)
                 else:
-                    print("****************** parent pid -> ", os.getpid())
-                    os.waitpid(0, 0)
+                    print("paret")
+                    # os.waitpid(0, 0)
+        os.waitpid(0, 0)
         return 0
 
     def clientUdp(self, port, ip, message, response_flag, buffersize):
