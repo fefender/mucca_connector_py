@@ -93,8 +93,26 @@ class mucca_connector:
         os.waitpid(0, 0)
         return 0
 
-    def clientUdp(self, port, ip, message, response_flag, buffersize):
+    def clientUdp(self, ports, ip, message, response_flag, buffersize):
         """ClientUdp."""
+        print('******** --- Test ports scale {}'.format(ports))
+        print('******** --- Test env pos {}'.format(os.getenv("MUCCACONNECTORLASTPORT")))
+        if os.getenv("MUCCACONNECTORLASTPORT") == None:
+            lastPortIndex = 0
+            os.environ["MUCCACONNECTORLASTPORT"]=str(lastPortIndex)
+            print('******** --- Test env pos after put {}'.format(os.getenv("MUCCACONNECTORLASTPORT")))
+            port = ports[lastPortIndex]
+        else:
+            lastPortIndex = int(os.getenv("MUCCACONNECTORLASTPORT"))
+            try:
+                lastPortIndex = lastPortIndex + 1
+                os.environ["MUCCACONNECTORLASTPORT"]=str(lastPortIndex)
+                port = ports[lastPortIndex]
+            except Exception:
+                lastPortIndex = 0
+                os.environ["MUCCACONNECTORLASTPORT"]=str(lastPortIndex)
+                port = ports[lastPortIndex]
+        print('******** Test port scale {}'.format(port))
         response_rec = None
         with socket.socket(
             socket.AF_INET,
@@ -152,4 +170,5 @@ class mucca_connector:
                         "msg": "Response 202 Accepted"
                     }
                 }
+        cs.close()
         return response_rec
