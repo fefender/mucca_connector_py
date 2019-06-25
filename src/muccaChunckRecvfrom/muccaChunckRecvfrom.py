@@ -12,15 +12,15 @@ class muccaChunckRecvfrom:
     @staticmethod
     def run(socketServer, chunckSize, logging):
         """Run recvfrom mucca."""
+
+        logging.log_info(
+            'Wait [preflight]...',
+            os.path.abspath(__file__),
+            sys._getframe().f_lineno
+            )
+
+        dataString, address = socketServer.recvfrom(chunckSize)
         try:
-            logging.log_info(
-                'Wait [preflight]...',
-                os.path.abspath(__file__),
-                sys._getframe().f_lineno
-                )
-
-            dataString, address = socketServer.recvfrom(chunckSize)
-
             dataPreFlight = json.loads(
                 dataString.decode(),
                 object_pairs_hook=OrderedDict
@@ -85,14 +85,14 @@ class muccaChunckRecvfrom:
 
             if dataPreFlight["md5"] != controlMd5.hexdigest():
                 return {
-                        "data": None,
-                        "address": None,
+                        "data": "",
+                        "address": address,
                         "status": -1
                         }
         except Exception:
             return {
-                    "data": None,
-                    "address": None,
+                    "data": "",
+                    "address": address,
                     "status": -1
                     }
 
