@@ -19,6 +19,7 @@
 import socket
 import sys
 import os
+import time
 from vendor.mucca_logging.mucca_logging import logging
 from vendor.mucca_connector_py.src.muccaChunckRecvfrom.muccaChunckRecvfrom import muccaChunckRecvfrom
 from vendor.mucca_connector_py.src.muccaChunckSendTo.muccaChunckSendTo import muccaChunckSendTo
@@ -171,6 +172,7 @@ class mucca_connector:
                     cs.close()
                     test=0
                     while test <= 3:
+                        time.sleep(1)
                         with socket.socket(
                             socket.AF_INET,
                             socket.SOCK_DGRAM,
