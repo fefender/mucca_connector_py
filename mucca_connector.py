@@ -143,6 +143,34 @@ class mucca_connector:
                     print("---------------", result['status'])
                     if int(result['status']) == -1:
                         cs.close()
+                        test=0
+                        while test <= 3:
+                            with socket.socket(
+                                socket.AF_INET,
+                                socket.SOCK_DGRAM,
+                                socket.IPPROTO_UDP
+                            ) as cs:
+                                server_address = (ip, port)
+                                c_message = bytes(message.encode())
+                                muccaChunckSendTo.run(
+                                    cs,
+                                    buffersize,
+                                    str(c_message, "utf-8"),
+                                    server_address,
+                                    logging
+                                )
+                                # cs.settimeout(10.0)
+                                result = muccaChunckRecvfrom.run(cs, buffersize, logging)
+                                cs.close()
+                                if result["status"] == 1:
+                                    return result["data"]
+                                else:
+                                    test=test+1
+                    response_rec = result["data"]
+                except socket.timeout as emsg:
+                    cs.close()
+                    test=0
+                    while test <= 3
                         with socket.socket(
                             socket.AF_INET,
                             socket.SOCK_DGRAM,
@@ -160,28 +188,10 @@ class mucca_connector:
                             # cs.settimeout(10.0)
                             result = muccaChunckRecvfrom.run(cs, buffersize, logging)
                             cs.close()
-                            return result["data"]
-                    response_rec = result["data"]
-                except socket.timeout as emsg:
-                    cs.close()
-                    with socket.socket(
-                        socket.AF_INET,
-                        socket.SOCK_DGRAM,
-                        socket.IPPROTO_UDP
-                    ) as cs:
-                        server_address = (ip, port)
-                        c_message = bytes(message.encode())
-                        muccaChunckSendTo.run(
-                            cs,
-                            buffersize,
-                            str(c_message, "utf-8"),
-                            server_address,
-                            logging
-                        )
-                        # cs.settimeout(10.0)
-                        result = muccaChunckRecvfrom.run(cs, buffersize, logging)
-                        cs.close()
-                        return result["data"]
+                            if result["status"] == 1:
+                                return result["data"]
+                            else:
+                                test=test+1
                     response_rec = {
                         "service": {
                             "status": "500",
