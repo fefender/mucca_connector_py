@@ -146,7 +146,26 @@ class mucca_connector:
                         cs.close()
                         test=0
                         while test <= 3:
-                            time.sleep(5)
+                            time.sleep(1)
+                            # -------------------------------------
+
+                            if os.getenv("MUCCACONNECTORLASTPORT") == None:
+                                lastPortIndex = 0
+                                os.environ["MUCCACONNECTORLASTPORT"]=str(lastPortIndex)
+                                print('******** --- Test env pos after put {}'.format(os.getenv("MUCCACONNECTORLASTPORT")))
+                                port = ports[lastPortIndex]
+                            else:
+                                lastPortIndex = int(os.getenv("MUCCACONNECTORLASTPORT"))
+                                try:
+                                    lastPortIndex = lastPortIndex + 1
+                                    os.environ["MUCCACONNECTORLASTPORT"]=str(lastPortIndex)
+                                    port = ports[lastPortIndex]
+                                except Exception:
+                                    lastPortIndex = 0
+                                    os.environ["MUCCACONNECTORLASTPORT"]=str(lastPortIndex)
+                                    port = ports[lastPortIndex]
+
+                            # -------------------------------------
                             with socket.socket(
                                 socket.AF_INET,
                                 socket.SOCK_DGRAM,
@@ -173,7 +192,26 @@ class mucca_connector:
                     cs.close()
                     test=0
                     while test <= 3:
-                        time.sleep(5)
+                        time.sleep(1)
+                        # -------------------------------------
+
+                        if os.getenv("MUCCACONNECTORLASTPORT") == None:
+                            lastPortIndex = 0
+                            os.environ["MUCCACONNECTORLASTPORT"]=str(lastPortIndex)
+                            print('******** --- Test env pos after put {}'.format(os.getenv("MUCCACONNECTORLASTPORT")))
+                            port = ports[lastPortIndex]
+                        else:
+                            lastPortIndex = int(os.getenv("MUCCACONNECTORLASTPORT"))
+                            try:
+                                lastPortIndex = lastPortIndex + 1
+                                os.environ["MUCCACONNECTORLASTPORT"]=str(lastPortIndex)
+                                port = ports[lastPortIndex]
+                            except Exception:
+                                lastPortIndex = 0
+                                os.environ["MUCCACONNECTORLASTPORT"]=str(lastPortIndex)
+                                port = ports[lastPortIndex]
+
+                        # -------------------------------------
                         with socket.socket(
                             socket.AF_INET,
                             socket.SOCK_DGRAM,
