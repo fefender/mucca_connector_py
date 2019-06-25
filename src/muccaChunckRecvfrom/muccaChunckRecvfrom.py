@@ -19,7 +19,10 @@ class muccaChunckRecvfrom:
 
             dataString, address = socketServer.recvfrom(chunckSize)
 
-            dataPreFlight = json.loads(dataString)
+            dataPreFlight = json.loads(
+                dataString.decode(),
+                object_pairs_hook=OrderedDict
+            )
 
             logging.log_info(
                 'Received total size msg {}:{} {} Byte'.format(

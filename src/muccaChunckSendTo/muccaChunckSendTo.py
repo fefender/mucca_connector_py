@@ -2,6 +2,7 @@
 import sys
 import os
 import hashlib
+import json
 
 
 class muccaChunckSendTo:
@@ -17,7 +18,7 @@ class muccaChunckSendTo:
             sys._getframe().f_lineno
             )
         controlMd5 = hashlib.md5(message.encode())
-        msgPrefight={"md5":(controlMd5.hexdigest()), "size":str(msgSize)}
+        msgPrefight=json.dumps({"md5":(controlMd5.hexdigest()), "size":str(msgSize)})
         print("\n\n-------------- *********** {}\n\n".format(str(msgPrefight).encode()))
         # sent = socketClient.sendto(bytes(str(msgSize).encode()), address)
         # print("--- sent -> {}".format(bytes(str(msgSize).encode())))
