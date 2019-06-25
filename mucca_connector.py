@@ -145,7 +145,7 @@ class mucca_connector:
                     if int(result['status']) == -1:
                         cs.close()
                         test=0
-                        while test <= 10:
+                        while test <= len(ports):
                             #time.sleep(5)
                             # -------------------------------------
 
@@ -191,7 +191,7 @@ class mucca_connector:
                 except socket.timeout as emsg:
                     cs.close()
                     test=0
-                    while test <= 10:
+                    while test <= len(ports):
                         # time.sleep(5)
                         # -------------------------------------
 
