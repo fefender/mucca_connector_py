@@ -146,7 +146,7 @@ class mucca_connector:
                         cs.close()
                         test=0
                         while test <= len(ports):
-                            #time.sleep(5)
+                            time.sleep(5)
                             # -------------------------------------
 
                             if os.getenv("MUCCACONNECTORLASTPORT") == None:
@@ -192,7 +192,7 @@ class mucca_connector:
                     cs.close()
                     test=0
                     while test <= len(ports):
-                        # time.sleep(5)
+                        time.sleep(5)
                         # -------------------------------------
 
                         if os.getenv("MUCCACONNECTORLASTPORT") == None:
@@ -244,7 +244,7 @@ class mucca_connector:
                             "Mucca-Service": "NULL"
                             },
                         "body": {
-                            "msg": "generic error"
+                            "msg": "generic error from client"
                         }
                     }
             else:
