@@ -73,15 +73,15 @@ class mucca_connector:
                         pid_rec = os.fork()
                         if pid_rec == 0:
                             result = muccaChunckRecvfrom.run(ss, buffersize, logging)
-                            if result["status"] == 1:
-                                response = ptr(result["data"])
-                                muccaChunckSendTo.run(
-                                    ss,
-                                    buffersize,
-                                    str(response),
-                                    result["address"],
-                                    logging
-                                )
+                            # if result["status"] == 1:
+                            response = ptr(result["data"])
+                            muccaChunckSendTo.run(
+                                ss,
+                                buffersize,
+                                str(response),
+                                result["address"],
+                                logging
+                            )
                             ss.close()
                             os._exit(0)
                         else:
