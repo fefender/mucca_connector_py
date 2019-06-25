@@ -96,7 +96,6 @@ class mucca_connector:
     def clientUdp(self, ports, ip, message, response_flag, buffersize):
         """ClientUdp."""
         print('******** --- Test ports scale {}'.format(ports))
-        print('******** --- Test env pos {}'.format(os.getenv("MUCCACONNECTORLASTPORT")))
         if os.getenv("MUCCACONNECTORLASTPORT") == None:
             lastPortIndex = 0
             os.environ["MUCCACONNECTORLASTPORT"]=str(lastPortIndex)
@@ -139,8 +138,49 @@ class mucca_connector:
                 try:
                     cs.settimeout(10.0)
                     result = muccaChunckRecvfrom.run(cs, buffersize, logging)
+                    print("---------------", result['address'])
+                    print("---------------", result['status'])
+                    if int(result['status']) == -1:
+                        cs.close()
+                        with socket.socket(
+                            socket.AF_INET,
+                            socket.SOCK_DGRAM,
+                            socket.IPPROTO_UDP
+                        ) as cs:
+                            server_address = (ip, port)
+                            c_message = bytes(message.encode())
+                            muccaChunckSendTo.run(
+                                cs,
+                                buffersize,
+                                str(c_message, "utf-8"),
+                                server_address,
+                                logging
+                            )
+                            # cs.settimeout(10.0)
+                            result = muccaChunckRecvfrom.run(cs, buffersize, logging)
+                            cs.close()
+                            return result["data"]
                     response_rec = result["data"]
                 except socket.timeout as emsg:
+                    cs.close()
+                    with socket.socket(
+                        socket.AF_INET,
+                        socket.SOCK_DGRAM,
+                        socket.IPPROTO_UDP
+                    ) as cs:
+                        server_address = (ip, port)
+                        c_message = bytes(message.encode())
+                        muccaChunckSendTo.run(
+                            cs,
+                            buffersize,
+                            str(c_message, "utf-8"),
+                            server_address,
+                            logging
+                        )
+                        # cs.settimeout(10.0)
+                        result = muccaChunckRecvfrom.run(cs, buffersize, logging)
+                        cs.close()
+                        return result["data"]
                     response_rec = {
                         "service": {
                             "status": "500",

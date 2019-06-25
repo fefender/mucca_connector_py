@@ -1,6 +1,7 @@
 """MuccaChunckSendTo."""
 import sys
 import os
+import hashlib
 
 
 class muccaChunckSendTo:
@@ -15,9 +16,12 @@ class muccaChunckSendTo:
             os.path.abspath(__file__),
             sys._getframe().f_lineno
             )
-
-        sent = socketClient.sendto(bytes(str(msgSize).encode()), address)
-
+        controlMd5 = hashlib.md5(message.encode())
+        msgPrefight={"md5":(controlMd5.hexdigest()), "size":str(msgSize)}
+        print("\n\n-------------- *********** {}\n\n".format(str(msgPrefight).encode()))
+        # sent = socketClient.sendto(bytes(str(msgSize).encode()), address)
+        # print("--- sent -> {}".format(bytes(str(msgSize).encode())))
+        sent = socketClient.sendto(str(msgPrefight).encode(), address)
         numberOfChunk = int(msgSize)/chunckSize
         plusChunk = int(msgSize) % chunckSize
 
