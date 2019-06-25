@@ -85,13 +85,13 @@ class muccaChunckRecvfrom:
 
             if dataPreFlight["md5"] != controlMd5.hexdigest():
                 return {
-                        "data": "",
+                        "data": "".encode(),
                         "address": address,
                         "status": -1
                         }
         except Exception:
             return {
-                    "data": "",
+                    "data": "".encode(),
                     "address": address,
                     "status": -1
                     }
