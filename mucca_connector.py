@@ -146,6 +146,7 @@ class mucca_connector:
                         cs.close()
                         test=0
                         while test <= 3:
+                            time.sleep(5)
                             with socket.socket(
                                 socket.AF_INET,
                                 socket.SOCK_DGRAM,
@@ -172,7 +173,7 @@ class mucca_connector:
                     cs.close()
                     test=0
                     while test <= 3:
-                        time.sleep(1)
+                        time.sleep(5)
                         with socket.socket(
                             socket.AF_INET,
                             socket.SOCK_DGRAM,
