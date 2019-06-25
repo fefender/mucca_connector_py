@@ -186,7 +186,7 @@ class mucca_connector:
                                 if result["status"] == 1:
                                     return result["data"]
                                 else:
-                                    new_path = './test.txt'
+                                    new_path = 'test.txt'
                                     new_days = open(new_path,'a+')
                                     new_days.write("md5 test: {}\n".format(test))
                                     new_days.close()
@@ -236,7 +236,7 @@ class mucca_connector:
                             if result["status"] == 1:
                                 return result["data"]
                             else:
-                                new_path = './test.txt'
+                                new_path = 'test.txt'
                                 new_days = open(new_path,'a+')
                                 new_days.write("timeout test: {}\n".format(test))
                                 new_days.close()
