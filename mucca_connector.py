@@ -170,7 +170,7 @@ class mucca_connector:
                 except socket.timeout as emsg:
                     cs.close()
                     test=0
-                    while test <= 3
+                    while test <= 3:
                         with socket.socket(
                             socket.AF_INET,
                             socket.SOCK_DGRAM,
