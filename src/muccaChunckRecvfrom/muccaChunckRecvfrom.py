@@ -2,6 +2,7 @@
 import sys
 import os
 import json
+import hashlib
 from collections import OrderedDict
 
 
@@ -77,7 +78,11 @@ class muccaChunckRecvfrom:
                     sys._getframe().f_lineno
                     )
                 completeMsg = "{}{}".format(completeMsg, data.decode('utf-8'))
+            print(">>>>>>>>>>>>>>>>>>>>>> (type {}) from msg {} ".format(type(completeMsg), completeMsg))
             controlMd5 = hashlib.md5(completeMsg.encode())
+            print(">>>>>>>>>>>>>>>>>>>>>> from msg {} ".format(controlMd5.hexdigest()))
+            print(">>>>>>>>>>>>>>>>>>>>>> from json {} ".format(dataPreFlight["md5"]))
+
             if dataPreFlight["md5"] != controlMd5.hexdigest():
                 return {
                         "data": None,
