@@ -97,160 +97,74 @@ class mucca_connector:
 
     def clientUdp(self, ports, ip, message, response_flag, buffersize):
         """ClientUdp."""
-        print('******** --- Test ports scale {}'.format(ports))
-        if os.getenv("MUCCACONNECTORLASTPORT") == None:
-            lastPortIndex = 0
-            os.environ["MUCCACONNECTORLASTPORT"]=str(lastPortIndex)
-            print('******** --- Test env pos after put {}'.format(os.getenv("MUCCACONNECTORLASTPORT")))
-            port = ports[lastPortIndex]
-        else:
-            lastPortIndex = int(os.getenv("MUCCACONNECTORLASTPORT"))
-            try:
-                lastPortIndex = lastPortIndex + 1
-                os.environ["MUCCACONNECTORLASTPORT"]=str(lastPortIndex)
-                port = ports[lastPortIndex]
-            except Exception:
+        for resend in range(0, 3):
+            print('******** --- Test ports scale {}'.format(ports))
+            if os.getenv("MUCCACONNECTORLASTPORT") == None:
                 lastPortIndex = 0
                 os.environ["MUCCACONNECTORLASTPORT"]=str(lastPortIndex)
+                print('******** --- Test env pos after put {}'.format(os.getenv("MUCCACONNECTORLASTPORT")))
                 port = ports[lastPortIndex]
-        print('******** Test port scale {}'.format(port))
-        response_rec = None
-        with socket.socket(
-            socket.AF_INET,
-            socket.SOCK_DGRAM,
-            socket.IPPROTO_UDP
-        ) as cs:
-            server_address = (ip, port)
-            c_message = bytes(message.encode())
-            try:
-                muccaChunckSendTo.run(
-                    cs,
-                    buffersize,
-                    str(c_message, "utf-8"),
-                    server_address,
-                    logging
-                )
-            except InterruptedError as emsg:
-                logging.log_error(
-                    'Interrupted signal error, sendto fail',
-                    os.path.abspath(__file__),
-                    sys._getframe().f_lineno
-                )
-            if response_flag != 0:
+            else:
+                lastPortIndex = int(os.getenv("MUCCACONNECTORLASTPORT"))
                 try:
-                    cs.settimeout(10.0)
-                    result = muccaChunckRecvfrom.run(cs, buffersize, logging)
-                    """print("---------------", result['address'])
-                    print("---------------", result['status'])
-                    if int(result['status']) == -1:
-                        cs.close()
-                        test=0
-                        while test <= 30:
-                            # time.sleep(5)
-                            # -------------------------------------
-
-                            if os.getenv("MUCCACONNECTORLASTPORT") == None:
-                                lastPortIndex = 0
-                                os.environ["MUCCACONNECTORLASTPORT"]=str(lastPortIndex)
-                                print('******** --- Test env pos after put {}'.format(os.getenv("MUCCACONNECTORLASTPORT")))
-                                port = ports[lastPortIndex]
-                            else:
-                                lastPortIndex = int(os.getenv("MUCCACONNECTORLASTPORT"))
-                                try:
-                                    lastPortIndex = lastPortIndex + 1
-                                    os.environ["MUCCACONNECTORLASTPORT"]=str(lastPortIndex)
-                                    port = ports[lastPortIndex]
-                                except Exception:
-                                    lastPortIndex = 0
-                                    os.environ["MUCCACONNECTORLASTPORT"]=str(lastPortIndex)
-                                    port = ports[lastPortIndex]
-
-                            # -------------------------------------
-                            with socket.socket(
-                                socket.AF_INET,
-                                socket.SOCK_DGRAM,
-                                socket.IPPROTO_UDP
-                            ) as cs:
-                                server_address = (ip, port)
-                                c_message = bytes(message.encode())
-                                muccaChunckSendTo.run(
-                                    cs,
-                                    buffersize,
-                                    str(c_message, "utf-8"),
-                                    server_address,
-                                    logging
-                                )
-                                # cs.settimeout(10.0)
-                                result = muccaChunckRecvfrom.run(cs, buffersize, logging)
-                                cs.close()
-                                if result["status"] == 1:
-                                    return result["data"]
-                                else:
-                                    new_path = 'test.txt'
-                                    new_days = open(new_path,'a+')
-                                    new_days.write("md5 test: {}\n".format(test))
-                                    new_days.close()
-                                    test=test+1"""
-                    new_path = 'test.txt'
-                    new_days = open(new_path,'a+')
-                    new_days.write("{}\n".format(result["status"]))
-                    new_days.close()
-                    if int(result["status"]) == -1:
-                        response_rec = result
-                    else:
+                    lastPortIndex = lastPortIndex + 1
+                    os.environ["MUCCACONNECTORLASTPORT"]=str(lastPortIndex)
+                    port = ports[lastPortIndex]
+                except Exception:
+                    lastPortIndex = 0
+                    os.environ["MUCCACONNECTORLASTPORT"]=str(lastPortIndex)
+                    port = ports[lastPortIndex]
+            print('******** Test port scale {}'.format(port))
+            response_rec = None
+            with socket.socket(
+                socket.AF_INET,
+                socket.SOCK_DGRAM,
+                socket.IPPROTO_UDP
+            ) as cs:
+                server_address = (ip, port)
+                c_message = bytes(message.encode())
+                try:
+                    muccaChunckSendTo.run(
+                        cs,
+                        buffersize,
+                        str(c_message, "utf-8"),
+                        server_address,
+                        logging
+                    )
+                except InterruptedError as emsg:
+                    logging.log_error(
+                        'Interrupted signal error, sendto fail',
+                        os.path.abspath(__file__),
+                        sys._getframe().f_lineno
+                    )
+                if response_flag != 0:
+                    try:
+                        cs.settimeout(3.0)
+                        result = muccaChunckRecvfrom.run(cs, buffersize, logging)
                         response_rec = result["data"]
-                except socket.timeout as emsg:
-                    cs.close()
-                    """test=0
-                    while test <= 30:
-                        # time.sleep(5)
-                        # -------------------------------------
-
-                        if os.getenv("MUCCACONNECTORLASTPORT") == None:
-                            lastPortIndex = 0
-                            os.environ["MUCCACONNECTORLASTPORT"]=str(lastPortIndex)
-                            print('******** --- Test env pos after put {}'.format(os.getenv("MUCCACONNECTORLASTPORT")))
-                            port = ports[lastPortIndex]
-                        else:
-                            lastPortIndex = int(os.getenv("MUCCACONNECTORLASTPORT"))
-                            try:
-                                lastPortIndex = lastPortIndex + 1
-                                os.environ["MUCCACONNECTORLASTPORT"]=str(lastPortIndex)
-                                port = ports[lastPortIndex]
-                            except Exception:
-                                lastPortIndex = 0
-                                os.environ["MUCCACONNECTORLASTPORT"]=str(lastPortIndex)
-                                port = ports[lastPortIndex]
-
-                        # -------------------------------------
-                        with socket.socket(
-                            socket.AF_INET,
-                            socket.SOCK_DGRAM,
-                            socket.IPPROTO_UDP
-                        ) as cs:
-                            server_address = (ip, port)
-                            c_message = bytes(message.encode())
-                            muccaChunckSendTo.run(
-                                cs,
-                                buffersize,
-                                str(c_message, "utf-8"),
-                                server_address,
-                                logging
-                            )
-                            # cs.settimeout(10.0)
-                            result = muccaChunckRecvfrom.run(cs, buffersize, logging)
-                            cs.close()
-                            if result["status"] == 1:
-                                return result["data"]
-                            else:
-                                new_path = 'test.txt'
-                                new_days = open(new_path,'a+')
-                                new_days.write("timeout test: {}\n".format(test))
-                                new_days.close()
-                                test=test+1"""
+                        return response_rec
+                    except socket.timeout as emsg:
+                        response_rec = {
+                            "service": {
+                                "status": "500",
+                                "serviceName": "connector",
+                                "action": "NULL"
+                                },
+                            "head": {
+                                "Content-Type": "application/json; charset=utf-8",
+                                "Mucca-Service": "NULL"
+                                },
+                            "body": {
+                                "msg": "generic error from client"
+                            }
+                        }
+                        cs.close()
+                        if resend == 2:
+                            return response_rec
+                else:
                     response_rec = {
                         "service": {
-                            "status": "500",
+                            "status": "202",
                             "serviceName": "connector",
                             "action": "NULL"
                             },
@@ -259,23 +173,8 @@ class mucca_connector:
                             "Mucca-Service": "NULL"
                             },
                         "body": {
-                            "msg": "generic error from client"
+                            "msg": "Response 202 Accepted"
                         }
                     }
-            else:
-                response_rec = {
-                    "service": {
-                        "status": "202",
-                        "serviceName": "connector",
-                        "action": "NULL"
-                        },
-                    "head": {
-                        "Content-Type": "application/json; charset=utf-8",
-                        "Mucca-Service": "NULL"
-                        },
-                    "body": {
-                        "msg": "Response 202 Accepted"
-                    }
-                }
-        cs.close()
-        return response_rec
+                    cs.close()
+                    return response_rec
