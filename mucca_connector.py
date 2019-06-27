@@ -97,7 +97,7 @@ class mucca_connector:
 
     def clientUdp(self, ports, ip, message, response_flag, buffersize):
         """ClientUdp."""
-        for resend in range(0, 3):
+        for resend in range(0, 4):
             print('******** --- Test ports scale {}'.format(ports))
             if os.getenv("MUCCACONNECTORLASTPORT") == None:
                 lastPortIndex = 0
@@ -139,7 +139,7 @@ class mucca_connector:
                     )
                 if response_flag != 0:
                     try:
-                        cs.settimeout(3.0)
+                        cs.settimeout(2.0)
                         result = muccaChunckRecvfrom.run(cs, buffersize, logging)
                         response_rec = result["data"]
                         return response_rec
@@ -159,8 +159,10 @@ class mucca_connector:
                             }
                         }
                         cs.close()
-                        if resend == 2:
+                        if resend == 3:
                             return response_rec
+                        else:
+                            time.sleep(1)
                 else:
                     response_rec = {
                         "service": {
