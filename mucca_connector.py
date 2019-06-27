@@ -140,7 +140,7 @@ class mucca_connector:
                 try:
                     cs.settimeout(10.0)
                     result = muccaChunckRecvfrom.run(cs, buffersize, logging)
-                    print("---------------", result['address'])
+                    """print("---------------", result['address'])
                     print("---------------", result['status'])
                     if int(result['status']) == -1:
                         cs.close()
@@ -190,11 +190,14 @@ class mucca_connector:
                                     new_days = open(new_path,'a+')
                                     new_days.write("md5 test: {}\n".format(test))
                                     new_days.close()
-                                    test=test+1
-                    response_rec = result["data"]
+                                    test=test+1"""
+                    if int(result["status"]) == -1:
+                        response_rec = result
+                    else:
+                        response_rec = result["data"]
                 except socket.timeout as emsg:
                     cs.close()
-                    test=0
+                    """test=0
                     while test <= 30:
                         # time.sleep(5)
                         # -------------------------------------
@@ -240,7 +243,7 @@ class mucca_connector:
                                 new_days = open(new_path,'a+')
                                 new_days.write("timeout test: {}\n".format(test))
                                 new_days.close()
-                                test=test+1
+                                test=test+1"""
                     response_rec = {
                         "service": {
                             "status": "500",
