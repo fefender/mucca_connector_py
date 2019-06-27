@@ -74,15 +74,15 @@ class mucca_connector:
                         pid_rec = os.fork()
                         if pid_rec == 0:
                             result = muccaChunckRecvfrom.run(ss, buffersize, logging)
-                            # if result["status"] == 1:
-                            response = ptr(result["data"])
-                            muccaChunckSendTo.run(
-                                ss,
-                                buffersize,
-                                str(response),
-                                result["address"],
-                                logging
-                            )
+                            if int(result["status"]) == 1:
+                                response = ptr(result["data"])
+                                muccaChunckSendTo.run(
+                                    ss,
+                                    buffersize,
+                                    str(response),
+                                    result["address"],
+                                    logging
+                                )
                             ss.close()
                             os._exit(0)
                         else:
@@ -191,6 +191,10 @@ class mucca_connector:
                                     new_days.write("md5 test: {}\n".format(test))
                                     new_days.close()
                                     test=test+1"""
+                    new_path = 'test.txt'
+                    new_days = open(new_path,'a+')
+                    new_days.write("{}\n".format(result["status"]))
+                    new_days.close()
                     if int(result["status"]) == -1:
                         response_rec = result
                     else:
