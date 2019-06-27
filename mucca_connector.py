@@ -162,7 +162,7 @@ class mucca_connector:
                         if resend == 3:
                             return response_rec
                         else:
-                            time.sleep(1)
+                            time.sleep(2)
                 else:
                     response_rec = {
                         "service": {
